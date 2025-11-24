@@ -144,7 +144,7 @@ export default async function Home() {
           <span className="rounded-full border border-pink-300 dark:border-white/20 px-3 py-1 uppercase tracking-[0.3em] text-pink-600 dark:text-pink-400">
             Beats al vuelo
           </span>
-          <span>Publicá, muestra y vende tu catálogo en LATAM</span>
+          <span>Publicá, compartí y vendé tu catálogo en todo LATAM</span>
         </div>
         <div className="mt-6 grid gap-8 lg:grid-cols-[1.3fr,0.7fr]">
           <div className="space-y-6">

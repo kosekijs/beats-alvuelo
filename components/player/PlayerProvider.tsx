@@ -12,7 +12,14 @@ import {
 } from "react";
 import Link from "next/link";
 import clsx from "clsx";
-import { Play, Pause, ChevronsDown, ChevronsUp, Volume2 } from "lucide-react";
+import {
+  Play,
+  Pause,
+  ChevronsDown,
+  ChevronsUp,
+  Volume2,
+  X,
+} from "lucide-react";
 
 export type PlayerTrack = {
   id: string;
@@ -35,6 +42,7 @@ interface PlayerContextValue {
   seek: (seconds: number) => void;
   isCollapsed: boolean;
   toggleCollapse: () => void;
+  closePlayer: () => void;
   volume: number;
   setVolume: (value: number) => void;
 }
@@ -155,6 +163,18 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setCurrentTime(audio.currentTime);
   }, []);
 
+  const closePlayer = useCallback(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+    }
+    setIsPlaying(false);
+    setCurrentTrack(null);
+    setCurrentTime(0);
+    setDuration(0);
+    setIsCollapsed(false);
+  }, []);
+
   const value = useMemo(
     () => ({
       currentTrack,
@@ -167,6 +187,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       seek,
       isCollapsed,
       toggleCollapse: toggleCollapsedState,
+      closePlayer,
       volume,
       setVolume,
     }),
@@ -181,6 +202,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       togglePlay,
       isCollapsed,
       toggleCollapsedState,
+      closePlayer,
       volume,
       setVolume,
     ]
@@ -195,11 +217,19 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         <div className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex justify-center">
           <div
             className={clsx(
-              "pointer-events-auto flex w-[min(960px,90vw)] items-center gap-4 rounded-3xl border border-white/10 bg-black/70 px-4 py-3 shadow-2xl shadow-black/40 backdrop-blur",
-              isCollapsed ? "gap-3" : "md:px-6 md:py-4"
+              "pointer-events-auto flex items-center gap-4 rounded-3xl border border-gray-200 dark:border-white/10 bg-white/95 dark:bg-black/70 shadow-2xl shadow-gray-900/40 dark:shadow-black/40 backdrop-blur transition-all",
+              isCollapsed
+                ? "w-auto px-3 py-2 gap-2"
+                : "w-[min(960px,90vw)] px-4 py-3 md:px-6 md:py-4"
             )}
           >
-            <div className="h-14 w-14 overflow-hidden rounded-2xl border border-white/10 bg-white/10">
+            {/* Artwork */}
+            <div
+              className={clsx(
+                "overflow-hidden rounded-2xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/10 shrink-0 transition-all",
+                isCollapsed ? "h-10 w-10" : "h-14 w-14"
+              )}
+            >
               {currentTrack.artwork ? (
                 <img
                   src={currentTrack.artwork}
@@ -207,74 +237,99 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-lg font-semibold text-white/80">
+                <div
+                  className={clsx(
+                    "flex h-full w-full items-center justify-center font-semibold text-gray-600 dark:text-white/80",
+                    isCollapsed ? "text-xs" : "text-lg"
+                  )}
+                >
                   {currentTrack.title.slice(0, 2).toUpperCase()}
                 </div>
               )}
             </div>
-            <div className="flex-1">
-              {!isCollapsed &&
-              currentTrack.producer &&
-              currentTrack.producerSlug ? (
-                <Link
-                  href={`/pro/${currentTrack.producerSlug}`}
-                  className="text-sm text-white/60 transition hover:text-white"
-                >
-                  {currentTrack.producer}
-                </Link>
-              ) : (
-                !isCollapsed && (
-                  <p className="text-sm text-white/60 line-clamp-1">
+
+            {/* Track info and progress */}
+            {!isCollapsed && (
+              <div className="flex-1 min-w-0">
+                {currentTrack.producer && currentTrack.producerSlug ? (
+                  <Link
+                    href={`/pro/${currentTrack.producerSlug}`}
+                    className="text-sm text-gray-600 dark:text-white/60 transition hover:text-gray-900 dark:hover:text-white"
+                  >
+                    {currentTrack.producer}
+                  </Link>
+                ) : (
+                  <p className="text-sm text-gray-600 dark:text-white/60 line-clamp-1">
                     {currentTrack.producer}
                   </p>
-                )
-              )}
-              <Link
-                href={`/beats/${currentTrack.beatSlug}`}
-                className="text-base font-semibold line-clamp-1 transition hover:text-pink-200"
-              >
-                {currentTrack.title}
-              </Link>
-              {!isCollapsed && (
-                <>
+                )}
+                <Link
+                  href={`/beats/${currentTrack.beatSlug}`}
+                  className="text-base font-semibold line-clamp-1 transition text-gray-900 dark:text-white hover:text-pink-600 dark:hover:text-pink-200"
+                >
+                  {currentTrack.title}
+                </Link>
+                <div
+                  className="mt-2 h-1.5 w-full cursor-pointer rounded-full bg-gray-200 dark:bg-white/10"
+                  onClick={(event) => {
+                    if (!duration) {
+                      return;
+                    }
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    const clickPosition = event.clientX - rect.left;
+                    const ratio = clickPosition / rect.width;
+                    seek(ratio * duration);
+                  }}
+                >
                   <div
-                    className="mt-2 h-1.5 w-full cursor-pointer rounded-full bg-white/10"
-                    onClick={(event) => {
-                      if (!duration) {
-                        return;
-                      }
-                      const rect = event.currentTarget.getBoundingClientRect();
-                      const clickPosition = event.clientX - rect.left;
-                      const ratio = clickPosition / rect.width;
-                      seek(ratio * duration);
-                    }}
-                  >
-                    <div
-                      className="h-full rounded-full bg-linear-to-r from-pink-500 to-orange-500"
-                      style={{ width: `${progress * 100}%` }}
-                    />
-                  </div>
-                  <div className="mt-1 flex justify-between text-xs text-white/60">
-                    <span>{formatTime(currentTime)}</span>
-                    <span>{formatTime(duration)}</span>
-                  </div>
-                </>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
+                    className="h-full rounded-full bg-linear-to-r from-pink-500 to-orange-500"
+                    style={{ width: `${progress * 100}%` }}
+                  />
+                </div>
+                <div className="mt-1 flex justify-between text-xs text-gray-500 dark:text-white/60">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>{formatTime(duration)}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Collapsed title */}
+            {isCollapsed && (
+              <div className="flex-1 min-w-0">
+                <Link
+                  href={`/beats/${currentTrack.beatSlug}`}
+                  className="text-sm font-semibold line-clamp-1 transition text-gray-900 dark:text-white hover:text-pink-600 dark:hover:text-pink-200"
+                >
+                  {currentTrack.title}
+                </Link>
+              </div>
+            )}
+
+            {/* Controls */}
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={togglePlay}
                 className={clsx(
-                  "flex h-12 w-12 items-center justify-center rounded-full border border-white/20 text-white transition",
-                  isPlaying ? "bg-white/10" : "bg-white/5"
+                  "flex items-center justify-center rounded-full border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white transition",
+                  isCollapsed ? "h-9 w-9" : "h-12 w-12",
+                  isPlaying
+                    ? "bg-gray-100 dark:bg-white/10"
+                    : "bg-gray-50 dark:bg-white/5"
                 )}
               >
-                {isPlaying ? <Pause size={20} /> : <Play size={20} />}
+                {isPlaying ? (
+                  <Pause size={isCollapsed ? 16 : 20} />
+                ) : (
+                  <Play size={isCollapsed ? 16 : 20} />
+                )}
               </button>
               {!isCollapsed && (
-                <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-2 text-xs text-white/80">
-                  <Volume2 size={14} className="text-pink-300" />
+                <div className="flex items-center gap-2 rounded-full border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-black/30 px-3 py-2 text-xs text-gray-700 dark:text-white/80">
+                  <Volume2
+                    size={14}
+                    className="text-pink-500 dark:text-pink-300"
+                  />
                   <input
                     type="range"
                     min={0}
@@ -291,16 +346,24 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={toggleCollapsedState}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/80"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 dark:border-white/15 text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/10 transition"
                 aria-label={
                   isCollapsed ? "Expandir reproductor" : "Minimizar reproductor"
                 }
               >
                 {isCollapsed ? (
-                  <ChevronsUp size={18} />
+                  <ChevronsUp size={16} />
                 ) : (
-                  <ChevronsDown size={18} />
+                  <ChevronsDown size={16} />
                 )}
+              </button>
+              <button
+                type="button"
+                onClick={closePlayer}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 dark:border-white/15 text-gray-700 dark:text-white/80 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 hover:border-red-300 dark:hover:border-red-800 transition"
+                aria-label="Cerrar reproductor"
+              >
+                <X size={16} />
               </button>
             </div>
           </div>

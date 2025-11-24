@@ -83,8 +83,11 @@ export async function POST(request: Request) {
           isPublished: true,
           producer: {
             select: {
+              id: true,
               name: true,
               slug: true,
+              mercadopagoToken: true,
+              mercadopagoConnected: true,
             },
           },
         },
@@ -99,13 +102,26 @@ export async function POST(request: Request) {
     );
   }
 
+  // Verificar que el productor tenga MP conectado
+  if (!license.beat.producer.mercadopagoConnected || !license.beat.producer.mercadopagoToken) {
+    return NextResponse.json(
+      { error: "El productor debe conectar su cuenta de Mercado Pago" },
+      { status: 400 }
+    );
+  }
+
+  // Usar el token del productor para el marketplace
   const client = new MercadoPagoConfig({
-    accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
+    accessToken: license.beat.producer.mercadopagoToken,
   });
   const preferenceClient = new Preference(client);
   const notificationUrl =
     process.env.MERCADOPAGO_WEBHOOK_URL ||
     buildUrl("/api/payments/webhook", resolvedBaseUrl);
+
+  // Calcular fee del marketplace (10%)
+  const MARKETPLACE_FEE_PERCENT = 0.10;
+  const marketplaceFee = Math.round(license.priceCents * MARKETPLACE_FEE_PERCENT);
 
   try {
     const response = await preferenceClient.create({
@@ -130,7 +146,9 @@ export async function POST(request: Request) {
           beatId: license.beat.id,
           beatSlug: license.beat.slug,
           producerSlug: license.beat.producer.slug,
+          producerId: license.beat.producer.id,
           licenseType: license.licenseType,
+          marketplaceFee: marketplaceFee.toString(),
         },
         back_urls: {
           success: buildUrl("/checkout/success", resolvedBaseUrl),

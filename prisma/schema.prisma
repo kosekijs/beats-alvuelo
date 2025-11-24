@@ -38,6 +38,12 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  // Mercado Pago Marketplace
+  mercadopagoUserId    String? @unique
+  mercadopagoToken     String?
+  mercadopagoEmail     String?
+  mercadopagoConnected Boolean @default(false)
+
   beats         Beat[]
   purchases     Purchase[] @relation("BuyerPurchases")
 
@@ -95,6 +101,7 @@ model Purchase {
   paymentStatus  String       @default("pending")
   currency       String       @default("ARS")
   amountPaid     Int
+  marketplaceFee Int          @default(0)
   checkoutUrl    String?
   licensePdfUrl  String?
   createdAt      DateTime     @default(now())

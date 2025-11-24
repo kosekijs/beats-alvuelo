@@ -86,9 +86,11 @@ export default async function BeatDetail({
 
   return (
     <div className="space-y-8">
-      <Link href="/beats" className="text-sm text-white/60">
-        ← Volver al catálogo
-      </Link>
+      <div className="mb-4">
+        <Link href="/beats" className="text-sm text-white/60">
+          ← Volver al catálogo
+        </Link>
+      </div>
       <div className="grid gap-8 lg:grid-cols-[2fr,1fr]">
         <section className="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6">
           <div className="flex flex-col gap-4 sm:flex-row">
