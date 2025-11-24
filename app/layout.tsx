@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Beats al Vuelo | Marketplace para Beatmakers LATAM",
   description:
-    "Crea tu catálogo, vende beats con licencias flexibles y cobra en moneda local usando Mercado Pago Checkout Pro.",
+    "Crea tu catálogo, vende beats con licencias flexibles y cobra en moneda local.",
   metadataBase: new URL(process.env.APP_BASE_URL || "http://localhost:3000"),
 };
 
