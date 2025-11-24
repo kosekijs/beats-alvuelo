@@ -38,9 +38,21 @@ export async function POST(request: Request) {
     }
 
     const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+    
+    // Usar el token con prefijo bav_ que da Vercel
+    const token = process.env.bav_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN;
+    
+    if (!token) {
+      return NextResponse.json(
+        { error: "Blob storage no configurado" },
+        { status: 500 }
+      );
+    }
+
     const blob = await put(filename, file, {
       access: "public",
       addRandomSuffix: true,
+      token,
     });
 
     return NextResponse.json({ url: blob.url, fileName: filename }, { status: 200 });
