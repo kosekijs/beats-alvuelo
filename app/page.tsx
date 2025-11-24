@@ -149,8 +149,8 @@ export default async function Home() {
         <div className="mt-6 grid gap-8 lg:grid-cols-[1.3fr,0.7fr]">
           <div className="space-y-6">
             <h1 className="text-4xl font-semibold leading-tight sm:text-5xl text-gray-900 dark:text-white">
-              Publicá tus beats hoy mismo y deja que tus clientes compren sin
-              escribirte.
+              Publicá tus beats hoy mismo y deja que tus clientes compren cómo
+              quieran.
             </h1>
             <p className="text-lg text-gray-600 dark:text-white/70">
               Subí tus previews, configurá licencias y compartí un checkout
