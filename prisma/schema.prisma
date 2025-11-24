@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// SQLite para desarrollo. Cambia a PostgreSQL para producción.
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PRODUCER
+  LISTENER
+  ADMIN
+}
+
+enum LicenseType {
+  BASIC
+  PREMIUM
+  EXCLUSIVE
+}
+
+enum DeliveryType {
+  MP3_WAV
+  STEMS
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  name          String
+  role          Role     @default(PRODUCER)
+  country       String?
+  bio           String?
+  avatarUrl     String?
+  heroCoverUrl  String?
+  slug          String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  beats         Beat[]
+  purchases     Purchase[] @relation("BuyerPurchases")
+
+  // NextAuth
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Beat {
+  id             String         @id @default(cuid())
+  title          String
+  slug           String         @unique
+  description    String?
+  bpm            Int?
+  genre          String?
+  moodTags       String?
+  coverUrl       String?
+  previewUrl     String
+  stemsUrl       String?
+  isPublished    Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  producerId     String
+  producer       User           @relation(fields: [producerId], references: [id])
+
+  licenses       BeatLicense[]
+  purchases      Purchase[]
+}
+
+model BeatLicense {
+  id          String       @id @default(cuid())
+  licenseType LicenseType
+  delivery    DeliveryType
+  priceCents  Int
+  currency    String       @default("ARS")
+  terms       String?
+  beatId      String
+  beat        Beat         @relation(fields: [beatId], references: [id])
+
+  purchases   Purchase[]
+
+  @@unique([beatId, licenseType, delivery])
+}
+
+model Purchase {
+  id             String       @id @default(cuid())
+  buyerId        String
+  buyer          User         @relation("BuyerPurchases", fields: [buyerId], references: [id])
+  beatId         String
+  beat           Beat         @relation(fields: [beatId], references: [id])
+  licenseId      String
+  license        BeatLicense  @relation(fields: [licenseId], references: [id])
+  paymentId      String?
+  paymentStatus  String       @default("pending")
+  currency       String       @default("ARS")
+  amountPaid     Int
+  checkoutUrl    String?
+  licensePdfUrl  String?
+  createdAt      DateTime     @default(now())
+}
+
+// --- NextAuth standard models ---
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
