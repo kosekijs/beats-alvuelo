@@ -6,7 +6,15 @@ import { BeatForm } from "@/components/forms/BeatForm";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
-type DashboardBeat = Awaited<ReturnType<typeof prisma.beat.findMany>>[number];
+type BeatLicenseEntity = Awaited<
+  ReturnType<typeof prisma.beatLicense.findMany>
+>[number];
+
+type DashboardBeat = Awaited<
+  ReturnType<typeof prisma.beat.findMany>
+>[number] & {
+  licenses: BeatLicenseEntity[];
+};
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -14,13 +22,13 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const beats = await prisma.beat.findMany({
+  const beats = (await prisma.beat.findMany({
     where: { producerId: session.user.id },
     include: {
       licenses: true,
     },
     orderBy: { createdAt: "desc" },
-  });
+  })) as DashboardBeat[];
 
   return (
     <div className="space-y-10">

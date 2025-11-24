@@ -4,7 +4,17 @@ import { BeatCard, type BeatCardData } from "@/components/BeatCard";
 
 const labelByGenre = (genre: string | null) => genre || "Sin género";
 
-type CatalogBeat = Awaited<ReturnType<typeof prisma.beat.findMany>>[number];
+type BeatLicenseEntity = Awaited<
+  ReturnType<typeof prisma.beatLicense.findMany>
+>[number];
+
+type CatalogBeat = Awaited<ReturnType<typeof prisma.beat.findMany>>[number] & {
+  licenses: BeatLicenseEntity[];
+  producer: {
+    name: string;
+    slug: string;
+  };
+};
 type GenreOption = Awaited<ReturnType<typeof prisma.beat.groupBy>>[number];
 type ProducerOption = Awaited<ReturnType<typeof prisma.user.findMany>>[number];
 
@@ -29,9 +39,9 @@ export default async function BeatsCatalog({
         ...(search
           ? {
               OR: [
-                { title: { contains: search, mode: "insensitive" } },
-                { description: { contains: search, mode: "insensitive" } },
-                { genre: { contains: search, mode: "insensitive" } },
+                { title: { contains: search } },
+                { description: { contains: search } },
+                { genre: { contains: search } },
               ],
             }
           : {}),
@@ -44,7 +54,7 @@ export default async function BeatsCatalog({
         },
       },
       orderBy: { createdAt: "desc" },
-    }),
+    }) as Promise<CatalogBeat[]>,
     prisma.beat.groupBy({
       by: ["genre"],
       where: { isPublished: true, genre: { not: null } },
@@ -55,7 +65,7 @@ export default async function BeatsCatalog({
       where: { role: "PRODUCER" },
       select: { name: true, slug: true },
       orderBy: { name: "asc" },
-    }),
+    }) as Promise<Array<{ name: string; slug: string }>>,
   ]);
 
   const cards: BeatCardData[] = beats.map((beat: CatalogBeat) => ({
@@ -73,6 +83,10 @@ export default async function BeatsCatalog({
     })),
     producer: beat.producer,
   }));
+
+  const nonEmptyGenres = (
+    genreOptions as Array<{ genre: string | null; _count: { _all: number } }>
+  ).filter((option) => option.genre && typeof option.genre === "string");
 
   return (
     <div className="space-y-10">
@@ -105,13 +119,11 @@ export default async function BeatsCatalog({
           className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3"
         >
           <option value="">Todos los géneros</option>
-          {genreOptions
-            .filter((option: GenreOption) => option.genre)
-            .map((option: GenreOption) => (
-              <option key={option.genre} value={option.genre ?? ""}>
-                {labelByGenre(option.genre)}
-              </option>
-            ))}
+          {nonEmptyGenres.map((option) => (
+            <option key={option.genre} value={option.genre ?? ""}>
+              {labelByGenre(option.genre)}
+            </option>
+          ))}
         </select>
         <select
           name="producer"
@@ -119,7 +131,7 @@ export default async function BeatsCatalog({
           className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3"
         >
           <option value="">Todos los productores</option>
-          {producerOptions.map((option: ProducerOption) => (
+          {producerOptions.map((option) => (
             <option key={option.slug} value={option.slug}>
               {option.name}
             </option>

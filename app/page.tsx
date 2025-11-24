@@ -41,7 +41,20 @@ const placeholderBeats: BeatCardData[] = [
 ];
 
 async function getLandingData() {
-  type LandingBeat = Awaited<ReturnType<typeof prisma.beat.findMany>>[number];
+  type BeatLicenseEntity = Awaited<
+    ReturnType<typeof prisma.beatLicense.findMany>
+  >[number];
+
+  type LandingBeat = Awaited<
+    ReturnType<typeof prisma.beat.findMany>
+  >[number] & {
+    licenses: BeatLicenseEntity[];
+    producer: {
+      name: string;
+      slug: string;
+    };
+  };
+
   const [beats, stats, beatsCount] = await Promise.all([
     prisma.beat.findMany({
       where: { isPublished: true },
@@ -53,7 +66,7 @@ async function getLandingData() {
       },
       orderBy: { createdAt: "desc" },
       take: 6,
-    }),
+    }) as Promise<LandingBeat[]>,
     prisma.user.aggregate({
       where: { role: "PRODUCER" },
       _count: { _all: true },

@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
-type ProducerCard = Awaited<ReturnType<typeof prisma.user.findMany>>[number];
+type ProducerCard = Awaited<ReturnType<typeof prisma.user.findMany>>[number] & {
+  _count: {
+    beats: number;
+  };
+  beats: Array<{
+    title: string;
+    slug: string;
+  }>;
+};
 
 export default async function ProducersPage() {
-  const producers = await prisma.user.findMany({
+  const producers = (await prisma.user.findMany({
     where: { role: "PRODUCER" },
     include: {
       _count: { select: { beats: true } },
@@ -16,7 +24,7 @@ export default async function ProducersPage() {
     },
     orderBy: { createdAt: "desc" },
     take: 24,
-  });
+  })) as ProducerCard[];
 
   return (
     <div className="space-y-8">

@@ -41,9 +41,21 @@ const licenseBenefits: Record<string, string[]> = {
   ],
 };
 
+type BeatLicenseEntity = Awaited<
+  ReturnType<typeof prisma.beatLicense.findMany>
+>[number];
+
 type BeatDetail = NonNullable<
   Awaited<ReturnType<typeof prisma.beat.findUnique>>
->;
+> & {
+  licenses: BeatLicenseEntity[];
+  producer: {
+    name: string;
+    slug: string;
+    country: string | null;
+    bio: string | null;
+  };
+};
 
 export default async function BeatDetail({
   params,
@@ -51,7 +63,7 @@ export default async function BeatDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const beat = await prisma.beat.findUnique({
+  const beat = (await prisma.beat.findUnique({
     where: { slug },
     include: {
       licenses: {
@@ -66,7 +78,7 @@ export default async function BeatDetail({
         },
       },
     },
-  });
+  })) as BeatDetail | null;
 
   if (!beat || !beat.isPublished) {
     notFound();
