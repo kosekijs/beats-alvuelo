@@ -2,7 +2,7 @@ import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_FILE_SIZE = 4.5 * 1024 * 1024; // 4.5MB (límite Vercel free tier)
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: "El archivo es demasiado grande (máx 50MB)" },
+        { error: "El archivo es demasiado grande (máx 4.5MB en plan gratuito)" },
         { status: 400 }
       );
     }

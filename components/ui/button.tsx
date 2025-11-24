@@ -8,11 +8,11 @@ export function buttonVariants({ variant = "primary" }: ButtonOptions = {}) {
   switch (variant) {
     case "ghost":
       return clsx(
-        "px-4 py-2 rounded-full border border-white/20 text-white/80 hover:text-white hover:border-white"
+        "px-4 py-2 rounded-full border border-gray-300 dark:border-white/20 text-gray-700 dark:text-white/80 hover:text-gray-900 dark:hover:text-white hover:border-gray-400 dark:hover:border-white bg-white dark:bg-transparent"
       );
     case "secondary":
       return clsx(
-        "px-4 py-2 rounded-full bg-white/10 text-white hover:bg-white/20"
+        "px-4 py-2 rounded-full bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-white/20"
       );
     default:
       return clsx(

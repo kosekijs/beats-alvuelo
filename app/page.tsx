@@ -139,35 +139,35 @@ export default async function Home() {
 
   return (
     <div className="space-y-16 pb-32">
-      <section className="rounded-3xl border border-white/10 bg-white/5 p-10">
-        <div className="flex flex-wrap items-center gap-3 text-sm text-white/60">
-          <span className="rounded-full border border-white/20 px-3 py-1 uppercase tracking-[0.3em] text-pink-400">
+      <section className="rounded-3xl border border-gray-200 dark:border-white/10 bg-gradient-to-br from-gray-50 to-white dark:from-white/5 dark:to-transparent p-10">
+        <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-white/60">
+          <span className="rounded-full border border-pink-300 dark:border-white/20 px-3 py-1 uppercase tracking-[0.3em] text-pink-600 dark:text-pink-400">
             Beats al vuelo
           </span>
           <span>Publicá, muestra y vende tu catálogo en LATAM</span>
         </div>
         <div className="mt-6 grid gap-8 lg:grid-cols-[1.3fr,0.7fr]">
           <div className="space-y-6">
-            <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">
+            <h1 className="text-4xl font-semibold leading-tight sm:text-5xl text-gray-900 dark:text-white">
               Publicá tus beats hoy mismo y deja que tus clientes compren sin
               escribirte.
             </h1>
-            <p className="text-lg text-white/70">
+            <p className="text-lg text-gray-600 dark:text-white/70">
               Subí tus previews, configurá licencias y compartí un checkout
               local desde una sola plataforma. Todo pensado para que tu próxima
               venta salga en minutos, no semanas.
             </p>
-            <ul className="grid gap-3 text-sm text-white/70 sm:grid-cols-2">
-              <li className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
+            <ul className="grid gap-3 text-sm text-gray-600 dark:text-white/70 sm:grid-cols-2">
+              <li className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 px-4 py-3">
                 • Subí MP3/WAV y define precios en segundos.
               </li>
-              <li className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
+              <li className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 px-4 py-3">
                 • Landing automática con player y stats para compartir.
               </li>
-              <li className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
+              <li className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 px-4 py-3">
                 • Checkout integrado con datos del comprador y validaciones.
               </li>
-              <li className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3">
+              <li className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 px-4 py-3">
                 • Licencias flexibles para cada beat (MP3, WAV, stems).
               </li>
             </ul>
@@ -180,28 +180,10 @@ export default async function Home() {
               </Link>
               <Link
                 href="/beats"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 font-semibold text-white/80 hover:text-white"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-300 dark:border-white/20 px-6 py-3 font-semibold text-gray-700 dark:text-white/80 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-transparent"
               >
                 Escuchar catálogo <ArrowRight size={16} />
               </Link>
-            </div>
-          </div>
-          <div className="grid gap-4 rounded-3xl border border-white/10 bg-black/40 p-6">
-            <div>
-              <p className="text-sm text-white/60">Productores activos</p>
-              <p className="text-4xl font-semibold">{producersCount || 0}</p>
-            </div>
-            <div>
-              <p className="text-sm text-white/60">Beats publicados</p>
-              <p className="text-4xl font-semibold">{beatsCount || 0}</p>
-            </div>
-            <div>
-              <p className="text-sm text-white/60">Checkouts activos</p>
-              <p className="text-4xl font-semibold">MP + email</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white/70">
-              “Enciendo la landing, mando un link y el artista termina de pagar
-              solo. Ya no pierdo tiempo enviando audios y contratos.”
             </div>
           </div>
         </div>
@@ -211,11 +193,15 @@ export default async function Home() {
         {benefits.map(({ title, description, icon: Icon }) => (
           <div
             key={title}
-            className="rounded-3xl border border-white/10 bg-white/5 p-6"
+            className="rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-sm dark:shadow-none"
           >
-            <Icon className="text-pink-400" size={24} />
-            <h3 className="mt-4 text-xl font-semibold">{title}</h3>
-            <p className="text-sm text-white/70">{description}</p>
+            <Icon className="text-pink-600 dark:text-pink-400" size={24} />
+            <h3 className="mt-4 text-xl font-semibold text-gray-900 dark:text-white">
+              {title}
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-white/70">
+              {description}
+            </p>
           </div>
         ))}
       </section>
@@ -223,12 +209,17 @@ export default async function Home() {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-pink-400">
+            <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-400">
               Destacados
             </p>
-            <h2 className="text-2xl font-semibold">Beats listos para grabar</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              Beats listos para grabar
+            </h2>
           </div>
-          <Link href="/producers" className="text-sm text-white/70">
+          <Link
+            href="/producers"
+            className="text-sm text-gray-600 dark:text-white/70 hover:text-gray-900 dark:hover:text-white"
+          >
             Ver todos →
           </Link>
         </div>
@@ -241,21 +232,23 @@ export default async function Home() {
 
       <section
         id="workflow"
-        className="space-y-8 rounded-3xl border border-white/10 bg-white/5 p-8"
+        className="space-y-8 rounded-3xl border border-gray-200 dark:border-white/10 bg-gradient-to-br from-gray-50 to-white dark:from-white/5 dark:to-transparent p-8 shadow-sm dark:shadow-none"
       >
         <div className="flex flex-wrap gap-6">
           {workflow.map((group) => (
             <div key={group.label} className="flex-1 min-w-[260px] space-y-3">
-              <p className="text-sm uppercase tracking-[0.3em] text-pink-400">
+              <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-400">
                 {group.label}
               </p>
-              <ol className="space-y-3 text-sm text-white/80">
+              <ol className="space-y-3 text-sm text-gray-700 dark:text-white/80">
                 {group.steps.map((step, index) => (
                   <li
                     key={step}
-                    className="flex items-start gap-3 rounded-2xl border border-white/10 bg-black/30 px-4 py-3"
+                    className="flex items-start gap-3 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/30 px-4 py-3"
                   >
-                    <span className="text-pink-300">0{index + 1}</span>
+                    <span className="text-pink-600 dark:text-pink-300 font-semibold">
+                      0{index + 1}
+                    </span>
                     <span>{step}</span>
                   </li>
                 ))}
@@ -265,45 +258,45 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-white/10 bg-black/30 p-8">
+      <section className="rounded-3xl border border-gray-200 dark:border-white/10 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-black/30 dark:to-black/20 p-8 shadow-sm dark:shadow-none">
         <div className="grid gap-6 lg:grid-cols-2">
           <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-pink-400">
+            <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-400">
               Licencias a medida
             </p>
-            <h3 className="mt-2 text-3xl font-semibold">
+            <h3 className="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">
               Decidís los términos, alcances y el precio por cada beat.
             </h3>
-            <p className="mt-4 text-white/70">
+            <p className="mt-4 text-gray-600 dark:text-white/70">
               No ofrecemos planes prearmados porque cada productor negocia con
               reglas distintas. Ajustá streams permitidos, monetización, uso de
               shows en vivo y entrega de stems según cada lanzamiento.
             </p>
-            <div className="mt-6 grid gap-3 text-sm text-white/80">
-              <div className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3">
+            <div className="mt-6 grid gap-3 text-sm text-gray-700 dark:text-white/80">
+              <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/40 px-4 py-3">
                 • Crea combinaciones como "MP3 promo", "WAV comercial" o "Stems
                 exclusivos" con los nombres que prefieras.
               </div>
-              <div className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3">
+              <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/40 px-4 py-3">
                 • Define monedas y límites (streams, territorios, sync, etc.) y
                 edítalos cuando cambie tu estrategia.
               </div>
-              <div className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3">
+              <div className="rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-black/40 px-4 py-3">
                 • Incluye notas personalizadas para aclarar créditos, splits o
                 upgrades privados.
               </div>
             </div>
           </div>
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-white/80">
-            <p className="text-sm uppercase tracking-[0.3em] text-pink-400">
+          <div className="rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 p-6 text-gray-700 dark:text-white/80 shadow-sm dark:shadow-none">
+            <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-400">
               Transparencia para el artista
             </p>
-            <p className="mt-2 text-lg">
+            <p className="mt-2 text-lg text-gray-900 dark:text-white">
               Cada vez que alguien abre tu landing ve exactamente las
               condiciones que configuraste, con comparativas claras y CTA para
               pagar. No hay cuadros genéricos ni sorpresas.
             </p>
-            <ul className="mt-4 space-y-2 text-sm text-white/70">
+            <ul className="mt-4 space-y-2 text-sm text-gray-600 dark:text-white/70">
               <li>• Tabla dinámica renderizada con tu copy y tus límites.</li>
               <li>
                 • Contrato automático usando tus cláusulas al confirmar el pago.
@@ -315,7 +308,7 @@ export default async function Home() {
             </ul>
             <Link
               href="/register"
-              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-pink-300"
+              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-pink-600 dark:text-pink-300 hover:text-pink-700 dark:hover:text-pink-200"
             >
               Configurar mis licencias <ArrowRight size={14} />
             </Link>
@@ -323,15 +316,15 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-white/10 bg-white/5 p-10 text-center">
-        <p className="text-sm uppercase tracking-[0.3em] text-pink-400">
+      <section className="rounded-3xl border border-gray-200 dark:border-white/10 bg-gradient-to-br from-pink-50 to-orange-50 dark:from-white/5 dark:to-transparent p-10 text-center shadow-lg dark:shadow-none">
+        <p className="text-sm uppercase tracking-[0.3em] text-pink-600 dark:text-pink-400">
           Listo para despegar
         </p>
-        <h3 className="mt-3 text-3xl font-semibold">
+        <h3 className="mt-3 text-3xl font-semibold text-gray-900 dark:text-white">
           Enfocate en producir. Nosotros nos encargamos del marketing y los
           cobros.
         </h3>
-        <p className="mt-4 text-white/70">
+        <p className="mt-4 text-gray-600 dark:text-white/70">
           Suma tus beats, crea tu landing y empieza a vender licencias hoy
           mismo. Sin comisiones ocultas.
         </p>
@@ -344,7 +337,7 @@ export default async function Home() {
           </Link>
           <Link
             href="/producers"
-            className="rounded-full border border-white/20 px-8 py-3 font-semibold text-white/80 hover:text-white"
+            className="rounded-full border border-gray-300 dark:border-white/20 px-8 py-3 font-semibold text-gray-700 dark:text-white/80 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-transparent"
           >
             Ver productores activos
           </Link>
