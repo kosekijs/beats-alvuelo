@@ -28,8 +28,9 @@ export default async function DashboardPage() {
     select: {
       name: true,
       slug: true,
-      mercadopagoConnected: true,
-      mercadopagoEmail: true,
+      payoutAlias: true,
+      payoutCbuCvu: true,
+      payoutHolder: true,
     },
   });
 
@@ -66,8 +67,9 @@ export default async function DashboardPage() {
       </section>
 
       <MercadoPagoConnect
-        isConnected={user.mercadopagoConnected}
-        mercadopagoEmail={user.mercadopagoEmail}
+        initialAlias={user.payoutAlias}
+        initialCbuCvu={user.payoutCbuCvu}
+        initialHolder={user.payoutHolder}
       />
 
       <section className="grid gap-6 lg:grid-cols-2">

@@ -38,11 +38,10 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  // Mercado Pago Marketplace
-  mercadopagoUserId    String? @unique
-  mercadopagoToken     String?
-  mercadopagoEmail     String?
-  mercadopagoConnected Boolean @default(false)
+  // Datos de cobro bancario (Argentina)
+  payoutAlias   String?
+  payoutCbuCvu  String?
+  payoutHolder  String?
 
   beats         Beat[]
   purchases     Purchase[] @relation("BuyerPurchases")
